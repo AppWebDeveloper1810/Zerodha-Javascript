@@ -1,19 +1,19 @@
 // Import necessary modules and packages
-import express from 'express';
-import { connect } from 'mongoose';
-import { json } from 'body-parser';
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 
 // Create an instance of Express
 const app = express();
 
 // Middleware setup: bodyParser for parsing JSON data
-app.use(json());
+app.use(bodyParser.json());
 
 // Define your MongoDB connection URL. Replace 'your_database_url' with the actual URL.
-const dbURL = 'mongodb://your_database_url';
+const dbURL = 'mongodb://localhost:27017/zerodha';
 
 // Connect to MongoDB using Mongoose
-connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('Connected to MongoDB');
   })
