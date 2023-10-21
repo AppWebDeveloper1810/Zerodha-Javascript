@@ -2,7 +2,9 @@
 
 const chai = require('chai');
 const expect = chai.expect;
-const User = require('../user'); // Adjust the path as needed
+const Userr = require('../user'); // Adjust the path as needed
+
+const User = Userr[0]
 
 describe('User', () => {
   let userInstance;
