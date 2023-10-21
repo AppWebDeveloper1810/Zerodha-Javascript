@@ -1,48 +1,49 @@
-const bcrypt = require('bcrypt');
+const PasswordClass = require('./password');
 
 // In-memory user data stored as an array of user objects
 const userData = [];
-const saltRounds = 2; // Number of salt rounds (adjust according to your security needs)
 
+class User {
+  constructor() {}
 
-function registerUser(username, email, password) {
-  // Check if the username is unique
-  if (!isUsernameUnique(username)) {
-    return "Username already exists. Please choose a different one.";
+  registerUser(username, email, password) {
+    // Check if the username is unique
+    if (!this.isUsernameUnique(username)) {
+      return "Username already exists. Please choose a different one.";
+    }
+
+    // Hash the password using the static method of PasswordClass
+    const hashedPassword = PasswordClass.hashPassword(password);
+
+    // Create a user object and store it in the userData array
+    const user = {
+      username: username,
+      email: email,
+      password: hashedPassword,
+      balance: 0, // Initial account balance
+    };
+    userData.push(user);
+
+    return "Registration successful. You can now log in.";
   }
 
-  // Hash the password (In practice, use a secure hashing library)
-  const hashedPassword = hashPassword(password);
+  login(username, password) {
+    // Find the user with the provided username
+    const user = this.findUserByUsername(username);
 
-  // Create a user object and store it in the userData array
-  const user = {
-    username: username,
-    email: email,
-    password: hashedPassword,
-    balance: 0, // Initial account balance
-  };
-  userData.push(user);
+    if (!user) {
+      return "User not found. Please register.";
+    }
 
-  return "Registration successful. You can now log in.";
-}
-
-function login(username, password) {
-  // Find the user with the provided username
-  const user = findUserByUsername(username);
-
-  if (!user) {
-    return "User not found. Please register.";
+    // Verify the password (In practice, use a secure hashing library)
+    if (PasswordClass.verifyPassword(password, user.password)) {
+      return `Welcome, ${username}!`;
+    } else {
+      return "Incorrect password. Please try again.";
+    }
   }
 
-  // Verify the password (In practice, use a secure hashing library)
-  if (verifyPassword(password, user.password)) {
-    return `Welcome, ${username}!`;
-  } else {
-    return "Incorrect password. Please try again.";
-  }
-}
-
-function isUsernameUnique(username) {
+  isUsernameUnique(username) {
     let isUnique = true;
     userData.forEach((user) => {
       if (user.username === username) {
@@ -50,9 +51,9 @@ function isUsernameUnique(username) {
       }
     });
     return isUnique;
-}
+  }
 
-function findUserByUsername(username) {
+  findUserByUsername(username) {
     let foundUser = null;
     userData.forEach((user) => {
       if (user.username === username) {
@@ -60,19 +61,13 @@ function findUserByUsername(username) {
       }
     });
     return foundUser;
-}
-  
-function hashPassword(password) {
-    // Generate a salt and hash the password with bcrypt
-    return bcrypt.hashSync(password, saltRounds);
+  }
 }
 
-function verifyPassword(plainPassword, hashedPassword) {
-  // In practice, use a secure hashing library (e.g., bcrypt)
-  return bcrypt.compareSync(plainPassword, hashedPassword)
-}
+
 
 // Example usage
-console.log(registerUser("alice", "alice@example.com", "secret_password"));
-console.log(login("alice", "wrong_password")); // Incorrect password
-console.log(login("bob", "some_password")); // User not found. Please register.
+const userInstance = new User();
+console.log(userInstance.registerUser("alice", "alice@example.com", "secret_password"));
+console.log(userInstance.login("alice", "wrong_password"));
+console.log(userInstance.login("bob", "some_password"));
