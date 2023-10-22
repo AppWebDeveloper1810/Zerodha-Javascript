@@ -1,17 +1,22 @@
 const PortfolioTracker = require('./portfolioTracker'); // Assuming you have a separate file for PortfolioTracker
 const PasswordClass = require('./password');
+const TradeHistory = require('./tradeHistory');
+const { getStockSummary, generateHexUserId } = require('./miscellaneous');
 
+console.log(generateHexUserId(16));
 // In-memory user data stored as an array of user objects
 const userData = [];
 
 class User {
   constructor() {
     this.portfolioTracker = new PortfolioTracker();
+    this.tradeHistory = new TradeHistory();
+    this.generateHexUserId = generateHexUserId;
+    
   }
-  registerUser(userId, username, email, password, balance, currency) {
+  registerUser(username, email, password, balance, currency) {
     // Check the data types of parameters
     if (
-      typeof userId !== 'string' ||
       typeof username !== 'string' ||
       typeof email !== 'string' ||
       typeof password !== 'string' ||
@@ -24,13 +29,10 @@ class User {
     if (!this.isUsernameUnique(username)) {
       return "Username already exists. Please choose a different one.";
     }
-    // Check if the userId is unique
-    if (!this.isUserIdUnique(userId)) {
-      return "UserId is not unique.";
-    }
     // Hash the password using the static method of PasswordClass
     const hashedPassword = PasswordClass.hashPassword(password);
     // Create a user object and store it in the userData array
+    const userId = this.generateHexUserId(16)
     const user = {
       userId: userId,
       username: username,
@@ -89,4 +91,5 @@ class User {
     return userData.find((user) => user.userId === userId) || null;
   }
 }
+const user = new User();
 module.exports = [User, userData];
