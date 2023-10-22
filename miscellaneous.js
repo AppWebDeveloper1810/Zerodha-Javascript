@@ -1,5 +1,6 @@
 const axios = require('axios');
 const secrets = require('./secrets');
+const crypto = require('crypto');
 
 async function getStockSummary(symbol, region) {
   const options = {
@@ -22,6 +23,12 @@ async function getStockSummary(symbol, region) {
     throw error;
   }
 }
+function generateHexUserId(length) {
+  const numBytes = Math.ceil(length / 2); // Each byte corresponds to 2 hex digits
+  const randomBytes = crypto.randomBytes(numBytes);
+  const hexUserId = randomBytes.toString('hex').slice(0, length);
+  return hexUserId;
+}
 
 // Example usage:
 async function main() {
@@ -36,4 +43,4 @@ async function main() {
   }
 }
 
-module.exports = getStockSummary;
+module.exports = { getStockSummary, generateHexUserId };
