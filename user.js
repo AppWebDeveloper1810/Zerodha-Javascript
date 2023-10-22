@@ -9,12 +9,23 @@ class User {
     this.portfolioTracker = new PortfolioTracker();
   }
   registerUser(userId, username, email, password, balance, currency) {
+    // Check the data types of parameters
+    if (
+      typeof userId !== 'string' ||
+      typeof username !== 'string' ||
+      typeof email !== 'string' ||
+      typeof password !== 'string' ||
+      typeof balance !== 'number' ||
+      typeof currency !== 'string'
+    ) {
+      return "Invalid parameter data types.";
+    }
     // Check if the username is unique
     if (!this.isUsernameUnique(username)) {
       return "Username already exists. Please choose a different one.";
     }
     // Check if the userId is unique
-    if (!this.isUserIdunique(userId)) {
+    if (!this.isUserIdUnique(userId)) {
       return "UserId is not unique.";
     }
     // Hash the password using the static method of PasswordClass
@@ -33,6 +44,10 @@ class User {
     return "Registration successful. You can now log in.";
   }
   login(username, password) {
+    // Check the data types of parameters
+    if (typeof username !== 'string' || typeof password !== 'string') {
+      return "Invalid parameter data types.";
+    }
     // Find the user with the provided username
     const user = this.findUserByUsername(username);
     if (!user) {
@@ -46,15 +61,31 @@ class User {
     }
   }
   isUsernameUnique(username) {
+    // Check the data type of the parameter
+    if (typeof username !== 'string') {
+      return false;
+    }
     return !userData.some((user) => user.username === username);
   }
   isUserIdUnique(userId) {
+    // Check the data type of the parameter
+    if (typeof userId !== 'string') {
+      return false;
+    }
     return !userData.some((user) => user.userId === userId);
   }
   findUserByUsername(username) {
+    // Check the data type of the parameter
+    if (typeof username !== 'string') {
+      return null;
+    }
     return userData.find((user) => user.username === username) || null;
   }
   findUserByUserId(userId) {
+    // Check the data type of the parameter
+    if (typeof userId !== 'string') {
+      return null;
+    }
     return userData.find((user) => user.userId === userId) || null;
   }
 }
