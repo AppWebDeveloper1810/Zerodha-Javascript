@@ -4,9 +4,8 @@ const Userr = require('./user');
 const User = Userr[0]
 const userData = Userr[1]
 
-class TradeHistory extends User {
+class TradeHistory{
   constructor() {
-    super();
     this.tradeHistory = [];
   }
 
