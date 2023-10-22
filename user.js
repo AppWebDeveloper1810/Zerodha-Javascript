@@ -1,29 +1,53 @@
 const PortfolioTracker = require('./portfolioTracker'); // Assuming you have a separate file for PortfolioTracker
 const PasswordClass = require('./password');
+
 // In-memory user data stored as an array of user objects
 const userData = [];
-class User extends PortfolioTracker {
+
+class User {
   constructor() {
-    super(); // Call the constructor of the PortfolioTracker class
+    this.portfolioTracker = new PortfolioTracker();
   }
-  registerUser(username, email, password) {
+  registerUser(userId, username, email, password, balance, currency) {
+    // Check the data types of parameters
+    if (
+      typeof userId !== 'string' ||
+      typeof username !== 'string' ||
+      typeof email !== 'string' ||
+      typeof password !== 'string' ||
+      typeof balance !== 'number' ||
+      typeof currency !== 'string'
+    ) {
+      return "Invalid parameter data types.";
+    }
     // Check if the username is unique
     if (!this.isUsernameUnique(username)) {
       return "Username already exists. Please choose a different one.";
+    }
+    // Check if the userId is unique
+    if (!this.isUserIdUnique(userId)) {
+      return "UserId is not unique.";
     }
     // Hash the password using the static method of PasswordClass
     const hashedPassword = PasswordClass.hashPassword(password);
     // Create a user object and store it in the userData array
     const user = {
+      userId: userId,
       username: username,
       email: email,
       password: hashedPassword,
-      balance: 0, // Initial account balance
+      balance: balance, // Initial account balance
+      currency: currency
     };
     userData.push(user);
+    this.portfolioTracker.createPortfolio(userId, "Main Portfolio")
     return "Registration successful. You can now log in.";
   }
   login(username, password) {
+    // Check the data types of parameters
+    if (typeof username !== 'string' || typeof password !== 'string') {
+      return "Invalid parameter data types.";
+    }
     // Find the user with the provided username
     const user = this.findUserByUsername(username);
     if (!user) {
@@ -37,22 +61,32 @@ class User extends PortfolioTracker {
     }
   }
   isUsernameUnique(username) {
-    let isUnique = true;
-    userData.forEach((user) => {
-      if (user.username === username) {
-        isUnique = false;
-      }
-    });
-    return isUnique;
+    // Check the data type of the parameter
+    if (typeof username !== 'string') {
+      return false;
+    }
+    return !userData.some((user) => user.username === username);
+  }
+  isUserIdUnique(userId) {
+    // Check the data type of the parameter
+    if (typeof userId !== 'string') {
+      return false;
+    }
+    return !userData.some((user) => user.userId === userId);
   }
   findUserByUsername(username) {
-    let foundUser = null;
-    userData.forEach((user) => {
-      if (user.username === username) {
-        foundUser = user;
-      }
-    });
-    return foundUser;
+    // Check the data type of the parameter
+    if (typeof username !== 'string') {
+      return null;
+    }
+    return userData.find((user) => user.username === username) || null;
+  }
+  findUserByUserId(userId) {
+    // Check the data type of the parameter
+    if (typeof userId !== 'string') {
+      return null;
+    }
+    return userData.find((user) => user.userId === userId) || null;
   }
 }
 module.exports = [User, userData];
